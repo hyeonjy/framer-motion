@@ -1,6 +1,10 @@
 import styled from "styled-components";
-import { motion, useMotionValue } from "framer-motion";
-import { useEffect } from "react";
+import {
+  motion,
+  useMotionValue,
+  useMotionValueEvent,
+  useTransform,
+} from "framer-motion";
 
 const Wrapper = styled.div`
   height: 100vh;
@@ -20,14 +24,14 @@ const Box = styled(motion.div)`
 
 function App() {
   const x = useMotionValue(0); //애니메이션의 값의 상태와 속도 추적
-  useEffect(() => {
-    x.on("change", () => console.log(x.get())); //get 메서드는 x값 읽기
-  }, [x]);
+  //usetransform은 한 값 범위에서 다른 값으로 범위를 매핑
+  const scaleValue = useTransform(x, [-800, 0, 800], [2, 1, 0.1]);
+
+  //useEffect 대신 useMotionValueEvent를 사용해야한다.
+  useMotionValueEvent(scaleValue, "change", (el) => console.log(el));
   return (
     <Wrapper>
-      {/* set 메서드로 값 업데이트 */}
-      <button onClick={() => x.set(200)}>click me</button>
-      <Box style={{ x }} drag="x" dragSnapToOrigin />
+      <Box style={{ x, scale: scaleValue }} drag="x" dragSnapToOrigin />
     </Wrapper>
   );
 }
