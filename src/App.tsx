@@ -3,11 +3,12 @@ import {
   motion,
   useMotionValue,
   useMotionValueEvent,
+  useScroll,
   useTransform,
 } from "framer-motion";
 
 const Wrapper = styled(motion.div)`
-  height: 100vh;
+  height: 500vh;
   width: 100vw;
   display: flex;
   justify-content: center;
@@ -35,12 +36,12 @@ function App() {
       "linear-gradient(135deg, rgb(0, 238, 155), rgb(238, 178, 0))",
     ]
   );
+  const { scrollYProgress } = useScroll(); //0~1 사이 수직 스크롤
+  const scale = useTransform(scrollYProgress, [0, 1], [1, 5]);
 
-  //useEffect 대신 useMotionValueEvent를 사용해야한다.
-  useMotionValueEvent(rotateZ, "change", (el) => console.log(el));
   return (
     <Wrapper style={{ background: gradient }}>
-      <Box style={{ x, rotateZ }} drag="x" dragSnapToOrigin />
+      <Box style={{ x, rotateZ, scale }} drag="x" dragSnapToOrigin />
     </Wrapper>
   );
 }
