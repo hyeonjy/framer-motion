@@ -6,7 +6,7 @@ import {
   useTransform,
 } from "framer-motion";
 
-const Wrapper = styled.div`
+const Wrapper = styled(motion.div)`
   height: 100vh;
   width: 100vw;
   display: flex;
@@ -25,13 +25,22 @@ const Box = styled(motion.div)`
 function App() {
   const x = useMotionValue(0); //애니메이션의 값의 상태와 속도 추적
   //usetransform은 한 값 범위에서 다른 값으로 범위를 매핑
-  const scaleValue = useTransform(x, [-800, 0, 800], [2, 1, 0.1]);
+  const rotateZ = useTransform(x, [-800, 800], [-360, 360]);
+  const gradient = useTransform(
+    x,
+    [-800, 0, 800],
+    [
+      "linear-gradient(135deg, rgb(0, 210, 238), rgb(0, 83, 238))",
+      "linear-gradient(135deg, rgb(238, 0, 153), rgb(221, 0, 238))",
+      "linear-gradient(135deg, rgb(0, 238, 155), rgb(238, 178, 0))",
+    ]
+  );
 
   //useEffect 대신 useMotionValueEvent를 사용해야한다.
-  useMotionValueEvent(scaleValue, "change", (el) => console.log(el));
+  useMotionValueEvent(rotateZ, "change", (el) => console.log(el));
   return (
-    <Wrapper>
-      <Box style={{ x, scale: scaleValue }} drag="x" dragSnapToOrigin />
+    <Wrapper style={{ background: gradient }}>
+      <Box style={{ x, rotateZ }} drag="x" dragSnapToOrigin />
     </Wrapper>
   );
 }
