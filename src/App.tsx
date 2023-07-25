@@ -1,11 +1,13 @@
 import styled from "styled-components";
 import {
+  AnimatePresence,
   motion,
   useMotionValue,
   useMotionValueEvent,
   useScroll,
   useTransform,
 } from "framer-motion";
+import { useState } from "react";
 
 const Wrapper = styled(motion.div)`
   height: 100vh;
@@ -16,48 +18,52 @@ const Wrapper = styled(motion.div)`
   background: linear-gradient(135deg, rgb(238, 0, 153), rgb(221, 0, 238));
 `;
 
-const Svg = styled.svg`
-  width: 300px;
-  height: 300px;
-  path {
-    stroke: white;
-    stroke-width: 2;
-  }
+const Box = styled(motion.div)`
+  width: 400px;
+  height: 200px;
+  background-color: rgba(255, 255, 255, 1);
+  border-radius: 40px;
+  position: absolute;
+  top: 100px;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.06);
 `;
 
-const svg = {
-  start: { pathLength: 0, fill: "rgba(255,255,255,0)" },
-  end: {
-    fill: "rgba(255,255,255, 1)",
-    pathLength: 1,
+const boxVariants = {
+  initial: {
+    opacity: 0,
+    scale: 0,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    rotateZ: 360,
+  },
+  leaving: {
+    opacity: 0,
+    scale: 0,
+    y: 50,
   },
 };
 
 function App() {
+  const [showing, setShowing] = useState(false);
+  const toggleShowing = () => setShowing((prev) => !prev);
   return (
     <Wrapper>
-      <Svg
-        focusable="false"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 512 512"
-      >
-        <motion.path
-          variants={svg}
-          initial={"start"}
-          animate={"end"}
-          //default를 쓰면 모든 속성 적용, fill만 제외하고(각기 다른 transtion을 주고 싶을 때)
-          transition={{
-            default: {
-              duration: 5,
-            },
-            fill: {
-              duration: 1,
-              delay: 3,
-            },
-          }}
-          d="M168.5 72L256 165l87.5-93h-175zM383.9 99.1L311.5 176h129L383.9 99.1zm50 124.9H256 78.1L256 420.3 433.9 224zM71.5 176h129L128.1 99.1 71.5 176zm434.3 40.1l-232 256c-4.5 5-11 7.9-17.8 7.9s-13.2-2.9-17.8-7.9l-232-256c-7.7-8.5-8.3-21.2-1.5-30.4l112-152c4.5-6.1 11.7-9.8 19.3-9.8H376c7.6 0 14.8 3.6 19.3 9.8l112 152c6.8 9.2 6.1 21.9-1.5 30.4z"
-        />
-      </Svg>
+      <button onClick={toggleShowing}>Click</button>
+      {/* AnimatePresence는 React에서 컴포넌트가 삭제될 때 컴포넌트에 애니메이션 효과를 줄 수 있음 */}
+      {/* AnimalPresence의 한가지 규칙은 visible 상태.  */}
+      {/* AnimalPresence의 내부는 visible 조건문이 있어야한다..  */}
+      <AnimatePresence>
+        {showing ? (
+          <Box
+            variants={boxVariants}
+            initial="initial"
+            animate="visible"
+            exit="leaving" //element가 삭제될 때 애니메이션
+          />
+        ) : null}
+      </AnimatePresence>
     </Wrapper>
   );
 }
